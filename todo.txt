@@ -1,0 +1,79 @@
+TO-DO LIST (none of the following represents maintainer's commitment)
+=====================================================================
+
+* Check for invalid parameters in ramdisk.exe ("ramdisk /?" or -?, or ?).
+
+* Prevent abuse of RAMFS and /R in particular: limit the overall size of
+  virtual disks and/or monitor the free RAM amount to ensure that a
+  certain amount is always free.
+  (requires an "accounting" feature and/or newer FSCTLs, so it may be
+  advantageous to introduce a "statistics" structure to report space
+  usage.)
+  + Expand the accounting facility to collect real (including all kinds
+    of slack space) memory allocation statistics.
+
+* Logging facility (report overruns, etc.) - need quite the same FSCTL
+  approach.
+
+* Add a /W parameter to the IFS. Wait, with message, until a keypress;
+  useful for debugging and system mantenance.
+
+* Revise the parameter parsing. Sometimes the strstr() will become tedious.
+
+* Refine the FSA_DETACH implementation.
+  + Currently all RAMFS routines operating with filesystem structures
+    must be checked to see if the structures still point to an existing
+    filesystem - this approach is inherently error-prone. A single
+    runaway pointer will result in a TRAP.
+  + The scavenger routine must be made more reliable (if only a Curdir
+    is left, there might be no way to pass a volume pointer to the
+    scavenger from FS_CHDIR()). A possible solution is to link all
+    detached pVolume`s into a list that could be garbage-collected from
+    an FS_ATTACH().
+
+* Remove the DBCS workaround to clean up code.
+
+* FS_FINDFROMNAME needs to resume from position, not from pName. We
+  resume from pName and introduce hacks like findnext_resume only
+  because the position being returned to RAMFS has so far been complete
+  rubbish (looks like the field is always taken from the first file in
+  the set whereas pName refers to a different - and correct - location).
+
+* RAMFS utilities, i.e. the tools to manage the ramdisks as if they
+  were local filesystems. List, properties, "format", create, destroy.
+  (ramdisk.exe /l to list, -s for status, -x for existing disks, -r or
+  /d  for release/destroy, and so on).
+  + A PM-based front-end for the above
+
+* RAMFS password protection. RAMFS is supplied a crypt()'ed password
+  by means its CONFIG.SYS entry and has a crypt() within itself. RAMDISK
+  supplies plain-text password to RAMFS when managing inquiries in a
+  "secure" mode. RAMDISK may also crypt() the password for insertion
+  into CONFIG.SYS.
+  + Log/count password violations.
+
+* Add a FSCTL to report component version.
+  + Check that RAMDISK/RAMFS versions match for the case if some FSCTL
+    structure changes.
+
+* Allow both - and / as a parameter prefix (init.c)
+
+* PM-based installation => WPS folder + icons.
+
+* Virtual PC Additions: an empty root directory on RAMFS (and any other
+  remote FS such as NETWKSTA) causes the "device I/O error" condition
+  in guest OS upon accessing the volume. Workaround was to create an
+  empty file or directory from within OS/2.
+
+* Find a way to report 3DNow! capability at the boot time. Background:
+  RAMFS may not succeed with 3DNow! unless it has finished patching the
+  kernel. And it has not enough privileges to patch the kernel while it
+  is on the init stage. It will be authorized so later when it acts like a
+  FSD. Only on the first FSD call which demands data transfer will RAMFS
+  call its "first-time" memcpy() hook to:
+  1. Detect 3DNow!
+  2. Patch the kernel
+  3. If (1) && (2) succeed => install K7-optimized routine, else use the
+     generic one.
+
+$Id: todo.txt,v 1.4 2006/04/01 10:08:09 andrew_belov Exp $

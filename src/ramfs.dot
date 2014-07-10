@@ -1,0 +1,17 @@
+digraph ramfs {
+ edge [fontsize=11,fontname="Arial Narrow"];
+ node [shape=box,fontsize=14,fontname="Arial Narrow"];
+ ramfs100 -> ramfs64 [label="Report 64M free"];
+ ramfs100[label="RAMFS v 1.00, 03/01/1998"];
+ ramfs64[label="RAMFS64, 05/12/1998"];
+ ramfs100 -> ramfs101 [label="Bug fixes, /Q, resizer"];
+ ramfs64 -> ramfs101 [label="Patch migration"];
+ ramfs101[label="RAMFS v 1.01, 14/04/2002"];
+ ramfs64 -> ramfs64p [label="Performance boost"];
+ ramfs64p[label="RAMFS64 Performance Update, 21/03/2002"];
+ ramfs64p -> ramfs102p [label="Patch migration, 3DNow!"];
+ ramfs101 -> ramfs102p [label="Bugfix migration"];
+ ramfs102p[label="RAMFS v 1.02 Performance Update, 21/10/2002"];
+ ramfs102p -> ramfsnext [label="Maintenance"];
+ ramfsnext[label="RAMFS v 1.03 onward"];
+}
